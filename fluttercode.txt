@@ -1,0 +1,46 @@
+class _WeatherAppState extends State<WeatherApp> {
+  bool fahrenheit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadSettings();
+  }
+
+  Future<void> loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      fahrenheit = prefs.getBool('fahrenheit') ?? false;
+    });
+  }
+
+  Future<void> changeUnit(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool('fahrenheit', value);
+
+    setState(() {
+      fahrenheit = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Weather App',
+      theme: ThemeData(
+        useMaterial3: true,
+        scaffoldBackgroundColor: backgroundColor,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: primaryColor,
+        ),
+      ),
+      home: MainNavigation(
+        fahrenheit: fahrenheit,
+        onUnitChanged: changeUnit,
+      ),
+    );
+  }
+}
